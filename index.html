@@ -553,6 +553,157 @@
             outline: none;
             max-height: 220px;
         }
+
+        /* Config Panel styles */
+        .config-card {
+            background: rgba(15, 17, 35, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .config-input-group {
+            margin-bottom: 1rem;
+        }
+
+        .config-input-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.4rem;
+        }
+
+        .config-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: #ffffff;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .config-input:focus {
+            border-color: var(--primary);
+        }
+
+        .config-select {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: #ffffff;
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .config-select:focus {
+            border-color: var(--primary);
+        }
+
+        /* Tabs Panel Styles */
+        .tabs-card {
+            margin-top: 2.5rem;
+        }
+
+        .tabs-header {
+            display: flex;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 14px 14px 0 0;
+            padding: 6px;
+            gap: 4px;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-bottom: none;
+        }
+
+        .tab-trigger {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 12px 16px;
+            font-family: var(--font-main);
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab-trigger:hover {
+            color: #ffffff;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .tab-trigger.active {
+            background: var(--panel-bg);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .tab-content-container {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .tab-pane {
+            display: none;
+            flex-direction: column;
+            flex-grow: 1;
+            height: 100%;
+        }
+
+        .tab-pane.active {
+            display: flex;
+        }
+
+        .tab-textarea {
+            width: 100%;
+            height: 250px;
+            background: rgba(10, 11, 23, 0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.6;
+            color: #d1d5db;
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .tab-textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .tab-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -568,123 +719,214 @@
 
         <div class="grid-layout">
             
-            <!-- LEFT PANEL: SOURCES AND VOLUMES -->
-            <div class="panel">
-                <div class="panel-title">
-                    <i class="fa-solid fa-sliders"></i>
-                    Audio Mixer-Konsole
-                </div>
-
-                <div class="option-group">
-                    <span class="option-label">1. Quellen freigeben & aktivieren</span>
-                    <button id="btn-setup" class="btn btn-primary w-100" style="margin-bottom: 1.2rem;">
-                        <i class="fa-solid fa-satellite-dish"></i> Quellen anfordern
-                    </button>
-                </div>
-
-                <div class="option-group">
-                    <span class="option-label">2. Mix Pegel anpassen</span>
-                    
-                    <!-- Microphone Card -->
-                    <div id="card-mic" class="source-card">
-                        <div class="source-card-header">
-                            <div class="source-name source-mic">
-                                <i class="fa-solid fa-microphone"></i>
-                                Mikrofon
-                            </div>
-                            <div id="status-mic" class="status-pill">Inaktiv</div>
-                        </div>
-                        <div class="volume-control">
-                            <i class="fa-solid fa-volume-low text-muted"></i>
-                            <div class="slider-wrapper">
-                                <input type="range" id="volume-mic" min="0" max="2" step="0.05" value="1" disabled>
-                            </div>
-                            <span id="label-volume-mic">100%</span>
-                        </div>
-                    </div>
-
-                    <!-- System Audio Card -->
-                    <div id="card-system" class="source-card">
-                        <div class="source-card-header">
-                            <div class="source-name source-system">
-                                <i class="fa-solid fa-desktop"></i>
-                                Systemsound (Screen Share)
-                            </div>
-                            <div id="status-system" class="status-pill">Inaktiv</div>
-                        </div>
-                        <div class="volume-control">
-                            <i class="fa-solid fa-volume-low text-muted"></i>
-                            <div class="slider-wrapper">
-                                <input type="range" id="volume-system" min="0" max="2" step="0.05" value="1" disabled>
-                            </div>
-                            <span id="label-volume-system">100%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- RIGHT PANEL: RECORDER ACTIONS AND VISUALIZATION -->
-            <div class="panel controls-panel">
-                <div>
+            <!-- LEFT PANEL: MIXER & CONFIG -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                
+                <!-- MIXER CARD -->
+                <div class="panel">
                     <div class="panel-title">
-                        <i class="fa-solid fa-circle-dot"></i>
-                        Steuerung
+                        <i class="fa-solid fa-sliders"></i>
+                        Audio Mixer-Konsole
                     </div>
 
                     <div class="option-group">
-                        <span class="option-label">Aufnahmemodus</span>
-                        <div class="mode-toggle-group">
-                            <button id="mode-audio" class="mode-btn active" onclick="setRecordingMode('audio')">
-                                <i class="fa-solid fa-file-audio"></i> Nur Audio
-                            </button>
-                            <button id="mode-video" class="mode-btn" onclick="setRecordingMode('video')">
-                                <i class="fa-solid fa-video"></i> Video + Audio
-                            </button>
-                        </div>
+                        <span class="option-label">1. Quellen freigeben & aktivieren</span>
+                        <button id="btn-setup" class="btn btn-primary w-100" style="margin-bottom: 1.2rem;">
+                            <i class="fa-solid fa-satellite-dish"></i> Quellen anfordern
+                        </button>
                     </div>
 
-                    <div class="timer-display" id="timer">00:00:00</div>
+                    <div class="option-group">
+                        <span class="option-label">2. Mix Pegel anpassen</span>
+                        
+                        <!-- Microphone Card -->
+                        <div id="card-mic" class="source-card">
+                            <div class="source-card-header">
+                                <div class="source-name source-mic">
+                                    <i class="fa-solid fa-microphone"></i>
+                                    Mikrofon
+                                </div>
+                                <div id="status-mic" class="status-pill">Inaktiv</div>
+                            </div>
+                            <div class="volume-control">
+                                <i class="fa-solid fa-volume-low text-muted"></i>
+                                <div class="slider-wrapper">
+                                    <input type="range" id="volume-mic" min="0" max="2" step="0.05" value="1" disabled>
+                                </div>
+                                <span id="label-volume-mic">100%</span>
+                            </div>
+                        </div>
 
-                    <!-- Audio Visualizer Canvas -->
-                    <div class="visualizer-container">
-                        <canvas id="visualizer-canvas"></canvas>
-                        <div id="visualizer-placeholder" class="visualizer-placeholder">
-                            <i class="fa-solid fa-wave-square fa-lg"></i>
-                            <span>Warte auf aktive Audioquellen...</span>
+                        <!-- System Audio Card -->
+                        <div id="card-system" class="source-card">
+                            <div class="source-card-header">
+                                <div class="source-name source-system">
+                                    <i class="fa-solid fa-desktop"></i>
+                                    Systemsound (Screen Share)
+                                </div>
+                                <div id="status-system" class="status-pill">Inaktiv</div>
+                            </div>
+                            <div class="volume-control">
+                                <i class="fa-solid fa-volume-low text-muted"></i>
+                                <div class="slider-wrapper">
+                                    <input type="range" id="volume-system" min="0" max="2" step="0.05" value="1" disabled>
+                                </div>
+                                <span id="label-volume-system">100%</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="btn-group">
-                    <button id="btn-start" class="btn btn-primary" disabled>
-                        <i class="fa-solid fa-circle"></i> Aufnahme starten
-                    </button>
-                    <div style="display: flex; gap: 0.8rem;">
-                        <button id="btn-pause" class="btn btn-secondary flex-grow-1" style="flex: 1;" disabled>
-                            <i class="fa-solid fa-pause"></i> Pause
-                        </button>
-                        <button id="btn-stop" class="btn btn-danger flex-grow-1" style="flex: 1;" disabled>
-                            <i class="fa-solid fa-square"></i> Beenden
-                        </button>
+                <!-- CONFIGURATION CARD -->
+                <div class="panel">
+                    <div class="panel-title">
+                        <i class="fa-solid fa-gears"></i>
+                        Whisper & Segmentierung
                     </div>
-                    <button id="btn-reset" class="btn btn-secondary">
-                        <i class="fa-solid fa-rotate-left"></i> Zurücksetzen
-                    </button>
+                    
+                    <div class="config-input-group">
+                        <label for="worker-url">Cloudflare Worker URL (Whisper)</label>
+                        <input type="text" id="worker-url" class="config-input" placeholder="https://..." value="https://sportschuetzen-whisper.dan-hunziker73.workers.dev/">
+                    </div>
+
+                    <div class="config-input-group">
+                        <label for="segment-select">Segmentierungs-Intervall</label>
+                        <select id="segment-select" class="config-select">
+                            <option value="60000">1 Minute (Testmodus)</option>
+                            <option value="300000">5 Minuten</option>
+                            <option value="600000" selected>10 Minuten (Standard)</option>
+                            <option value="900000">15 Minuten</option>
+                            <option value="0">Nur manuell beim Beenden übertragen</option>
+                        </select>
+                    </div>
                 </div>
+
             </div>
 
-            <!-- PREVIEW PANEL -->
-            <div id="preview-panel" class="panel preview-panel grid-layout" style="grid-column: span 2; display: none;">
-                <div class="preview-header">
-                    <h6>Vorschau der Aufzeichnung</h6>
-                    <a id="btn-download" class="btn btn-primary btn-sm" style="padding: 6px 14px; font-size: 0.85rem;" download="aufnahme.webm">
-                        <i class="fa-solid fa-download"></i> Herunterladen
-                    </a>
+            <!-- RIGHT PANEL: STEUEUNG & TABS & PREVIEW -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                
+                <!-- STEUEUNG & VISUALIZER -->
+                <div class="panel controls-panel">
+                    <div>
+                        <div class="panel-title">
+                            <i class="fa-solid fa-circle-dot"></i>
+                            Steuerung
+                        </div>
+
+                        <div class="option-group">
+                            <span class="option-label">Aufnahmemodus</span>
+                            <div class="mode-toggle-group">
+                                <button id="mode-audio" class="mode-btn active" onclick="setRecordingMode('audio')">
+                                    <i class="fa-solid fa-file-audio"></i> Nur Audio
+                                </button>
+                                <button id="mode-video" class="mode-btn" onclick="setRecordingMode('video')">
+                                    <i class="fa-solid fa-video"></i> Video + Audio
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="timer-display" id="timer">00:00:00</div>
+
+                        <!-- Audio Visualizer Canvas -->
+                        <div class="visualizer-container">
+                            <canvas id="visualizer-canvas"></canvas>
+                            <div id="visualizer-placeholder" class="visualizer-placeholder">
+                                <i class="fa-solid fa-wave-square fa-lg"></i>
+                                <span>Warte auf aktive Audioquellen...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button id="btn-start" class="btn btn-primary" disabled>
+                            <i class="fa-solid fa-circle"></i> Aufnahme starten
+                        </button>
+                        <div style="display: flex; gap: 0.8rem;">
+                            <button id="btn-pause" class="btn btn-secondary flex-grow-1" style="flex: 1;" disabled>
+                                <i class="fa-solid fa-pause"></i> Pause
+                            </button>
+                            <button id="btn-stop" class="btn btn-danger flex-grow-1" style="flex: 1;" disabled>
+                                <i class="fa-solid fa-square"></i> Beenden
+                            </button>
+                        </div>
+                        <button id="btn-reset" class="btn btn-secondary">
+                            <i class="fa-solid fa-rotate-left"></i> Sitzung zurücksetzen
+                        </button>
+                    </div>
                 </div>
-                <div style="grid-column: span 2;">
-                    <video id="preview-video" class="preview-media" controls></video>
-                    <audio id="preview-audio" class="preview-media" style="display: none;" controls></audio>
+
+                <!-- TABS PANEL -->
+                <div class="tabs-card">
+                    <div class="tabs-header">
+                        <button id="trigger-prompt" class="tab-trigger active" onclick="switchTab('tab-prompt')">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Gemini Prompt
+                        </button>
+                        <button id="trigger-transcript" class="tab-trigger" onclick="switchTab('tab-transcript')">
+                            <i class="fa-solid fa-file-lines"></i> Roh-Transkript
+                        </button>
+                        <button id="trigger-protocol" class="tab-trigger" onclick="switchTab('tab-protocol')">
+                            <i class="fa-solid fa-robot"></i> KI-Protokoll
+                        </button>
+                    </div>
+                    <div class="tab-content-container">
+                        
+                        <!-- TAB 1: GEMINI PROMPT -->
+                        <div id="tab-prompt" class="tab-pane active">
+                            <textarea id="prompt-field" class="tab-textarea" readonly></textarea>
+                            <div class="tab-actions">
+                                <button class="btn btn-primary w-100" onclick="copyPromptText()">
+                                    <i class="fa-solid fa-copy"></i> Gemini Prompt kopieren
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- TAB 2: ROH-TRANSKRIPT -->
+                        <div id="tab-transcript" class="tab-pane">
+                            <textarea id="transcript-field" class="tab-textarea" placeholder="Warte auf transkribierte Segmente aus Whisper..." readonly></textarea>
+                            <div class="tab-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <button class="btn btn-secondary" onclick="copyTranscriptText()">
+                                    <i class="fa-solid fa-copy"></i> Kopieren
+                                </button>
+                                <button class="btn btn-secondary" onclick="downloadTranscriptText()">
+                                    <i class="fa-solid fa-download"></i> Herunterladen
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- TAB 3: KI-PROTOKOLL -->
+                        <div id="tab-protocol" class="tab-pane">
+                            <button id="btn-generate-protocol" class="btn btn-primary" style="margin-bottom: 1rem; width: 100%;" onclick="generateProtocolAutomatically()">
+                                <i class="fa-solid fa-cogs"></i> Protokoll automatisch generieren
+                            </button>
+                            <textarea id="protocol-field" class="tab-textarea" placeholder="Sobald die Aufnahme beendet ist, wird das fertige Protokoll basierend auf den Transkripten hier generiert..."></textarea>
+                            <div class="tab-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <button class="btn btn-secondary" onclick="copyProtocolText()">
+                                    <i class="fa-solid fa-copy"></i> Kopieren
+                                </button>
+                                <button class="btn btn-secondary" onclick="downloadProtocolText()">
+                                    <i class="fa-solid fa-download"></i> Herunterladen
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
+
+                <!-- PREVIEW PANEL -->
+                <div id="preview-panel" class="panel preview-panel" style="display: none;">
+                    <div class="preview-header">
+                        <h6>Vorschau der Aufzeichnung</h6>
+                        <a id="btn-download" class="btn btn-primary btn-sm" style="padding: 6px 14px; font-size: 0.85rem;" download="aufnahme.webm">
+                            <i class="fa-solid fa-download"></i> Herunterladen
+                        </a>
+                    </div>
+                    <div>
+                        <video id="preview-video" class="preview-media" controls></video>
+                        <audio id="preview-audio" class="preview-media" style="display: none;" controls></audio>
+                    </div>
+                </div>
+
             </div>
 
             <!-- LOG LOG PANEL -->
@@ -728,6 +970,14 @@
         // Visualizer config
         let visualizerAnimationId = null;
 
+        // Transcription & Segmentation Configuration
+        let whisperWorkerUrl = 'https://sportschuetzen-whisper.dan-hunziker73.workers.dev/';
+        let segmentInterval = 600000; // 10 minutes default (600,000 ms)
+        let transcripts = [];
+        let segmentCounter = 0;
+        let segmentTimer = null;
+        let isStoppedManually = false;
+
         // DOM elements
         const btnSetup = document.getElementById('btn-setup');
         const btnStart = document.getElementById('btn-start');
@@ -754,6 +1004,123 @@
         const previewPanel = document.getElementById('preview-panel');
         const previewVideo = document.getElementById('preview-video');
         const previewAudio = document.getElementById('preview-audio');
+
+        const workerUrlInput = document.getElementById('worker-url');
+        const segmentSelect = document.getElementById('segment-select');
+
+        // Musterprotokoll aus Januar 2026 als Stil- und Strukturvorlage
+        const PROTOKOLL_MUSTER = `48. Vorstandsitzung Sportschützen Muhen
+Ort:\tMetzgerei Berchtold, Partyraum
+Datum:\tDonnerstag, 15. Januar 2026
+Uhrzeit:\t18.45 Uhr
+Teilnehmer:\tDaniel Berchtold, Präsident
+\tStefanie Berchtold
+\tSimon Hediger
+\tDaniel Hunziker
+\tAndrea Rossi
+\tBeat Augsburger
+
+Traktanden
+1. Begrüssung
+Daniel Berchtold begrüsst die Vorstandsmitglieder zur letzten gemeinsamen Vorstandsitzung in dieser Zusammensetzung. 
+
+2. Protokoll der letzten Vorstandsitzung
+Das Protokoll der letzten Sitzung vom 21.08.2025 wird unter Verdankung an den Verfasser genehmigt.
+
+3. Wasserschaden / AGV / Schützenstube
+Nach erfolgter Trocknung konnte der neue Boden in der Schützenstube und im Büro verlegt werden. Die Besichtigung von Herrn Ly von der Aarg. Gebäudeversicherung hat ergeben, dass sie nur Kosten für effektive Prävention finanziell unterstützen werden. Die bei Burgherr Garten AG eingeholte Offerte für das Erstellen von Ablaufrinnen bringe demzufolge keine Prävention. Bei einer Erstellung dieser Rillen würden deshalb keine Kosten übernommen.
+Das Problem bestehe im Bereich vom Parkplatz. Dessen Neigung zur Eingangstüre hin führe zu diesen Wasserschäden. Einen effektiv wirksamen Hochwasserschutz würde eine wasserdichte Türe bringen. Die Kosten sind jedoch enorm hoch und es ist nicht erwiesen, ob sich das Wasser nicht neben der Eingangstüre einen Weg ins Innere suchen und finden würde. Als Alternative schlägt Herr Ly vor, rund um die Eingangstüre einen rund 20 cm hohen Aufbau zu erstellen. Die darin eingebaute Klappe würde bei Starkregen schliessen und somit einen Wassereintritt im Türbereich verhindern. Es besteht jedoch dasselbe Problem wie bei der wasserdichten Türe. Es gibt keine Garantie, dass das Wasser nicht neben der Türe eindringen.
+Der Vorstand ist sich einig, dass beide Vorschläge für uns nicht in Frage kommen. Sei es wegen der hohen Kosten der Türe oder wegen der nicht rollstuhlgängigen Erhöhung im Türbereich. Es ist wichtig, dass der Abfluss unter dem Gitterrost vor der Eingangstüre immer frei ist und nicht von Blättern verstopft wird. Das Problem mit dem sehr hohen Gewicht des aktuellen Rostes liesse sich mit einem neuen, viel leichteren Kunststoff-Rost lösen. Simon Hediger wird sich um eine Offerte/Anfrage kümmern.
+Daniel Hunziker wird beim AGV, Herrn Ly, nachfragen, bei welcher max. Höhe des Wasserstandes die Situation kritisch würde. Vorderhand werden wir versuchen, künftige Wasserschäden mit dieser Methode zu verhindern.
+Daniel Berchtold informiert, dass das Departement Bau, Verkehr und Umwelt, Abteilung Energie, Aarau, während den Bauarbeiten an der Gasleitung (Januar und Februar 2026) einen Baucontainer sowie ein Toi-Toi auf unserem Parkplatz aufstellen würde. Als Entschädigung werden einmalig CHF 1'000 vergütet. Der Vorstand kann diesem Gesuch zustimmen. Daniel Berchtold wird unsere Zustimmung entsprechend zurückmelden. und ausserdem noch fragen, ob der Ersatz des gefällten Baumes finanziell entschädigt wird.
+
+4. Entwässerung ENIWA
+Mit der ENIWA wurde seinerzeit ein Vertrag für die Kostenbeteiligung am Unterhalt und Reinigung der Entwässerungsleitung ausgehandelt. Dieser Vertrag muss nun neu ausgehandelt werden. Es ist wiederum eine Einmalentschädigung für die nächsten 25 Jahre vorgesehen. Aufgrund der bisher angefallenen Kosten wird eine einmalige Entschädigung in der Höhe von CHF 11’250-CHF 15'000 vorgeschlagen. Daniel Berchtold wird die ENIWA entsprechend informieren und unseren Vorschlag weiterleiten.
+
+5. Empfang Eidg. Schützenfest Chur 2026
+Das ESF 2026 in Chur wird lediglich von 7 Sportschützen besucht. Der Empfang der Sportschützen durch die anderen Dorfvereine würde am Sonntag, 23.08.2026 stattfinden. An diesem Sonntag findet im Rüteli ebenso der kantonale Jugendtag statt. Nach kurzer Diskussion ist man sich im Vorstand einig, auf den Empfang durch die Dorfvereine zu verzichten. Einerseits wegen der geringen Beteiligung am ESF und andererseits wegen des gleichzeitig stattfindenden Jugendtages. Daniel Berchtold wird den Vorstandsentscheid dem zuständigen Verein der Dorfvereine mitteilen.
+
+6. Aargauer Meisterschaft 50m
+So wie es aktuell aussieht, wird die Schiessanlage Rüteli in Muhen nicht mehr für die Durchführung der AG-Meisterschaft in Betracht gezogen. Während des Umbaus der Schiessanlage in der RSA Lostorf, Buchs, wurde noch davon ausgegangen, dass die AG-Meisterschaften abwechslungsweise in Buchs und in Muhen durchgeführt werden. Dem ist scheinbar nicht mehr so. Die Meisterschaft wird jedes Jahr nach Buchs vergeben. Der Vorstand nimmt dies zur Kenntnis.
+Andrea Rossi teilt mit, dass die Entschädigungsvereinbarung zwischen AGSV und Sportschützen Muhen für die Benützung der Schiessanlage G-50m angepasst wird. Der Präsident und der Kassier unterschreiben den neu aufgesetzten Vertrag. Andrea Rossi wird diesen an die richtige Stelle weiterleiten.
+
+7. Generalversammlung
+Der Vorstand bespricht die einzelnen Traktanden der Generalversammlung. Die Reihenfolge ist gegenüber den Vorjahren unverändert.
+1. Begrüssung
+2. Wahl Stimmenzähler
+3. Wahl Tagespräsident
+4. Protokoll der letzten GV
+5. Mutationen
+6. Jahresbericht des Präsidenten
+7. Jahresbericht des Jungschützenleiters
+8. Jahresrechnung
+9. Revisorenbericht
+10. Budget
+11. Jahresbeitrag
+12. Wahlen (12.1 Vorstand, 12.2 Präsident, 12.3 Revisoren, 12.4 Fähnrich)
+13. Tätigkeitsprogramm und Beschlussfassung Jahresmeisterschaft
+14. Ehrungen
+15. Anträge
+16. Mitteilungen/Diverses
+
+8. Diverses und Umfrage
+Simon Hediger teilt mit, dass er diverse Vereinsbekleidung an die GV mitnehmen wird, welche vor Ort probiert und bestellt werden kann.
+Andrea Rossi informiert, dass die firma CMA Trading GmbH (Christian Matter) für den Schulsport in der Saison 2025 sämtliche Munition für Luftgewehr und Kleinkaliber gesponsert hat. Der Vorstand beschliesst, Christian Matter als Dank eine Speckseite zu schenken. Daniel Berchtold wird diese besorgen.
+Beat Augsburger teilt mit, dass der AGSV eine Halle in der Grösse von 500-600 m2 kaufen möchte. Die Halle würde für das kantonale Leistungszentrum zur Indoor-Anlage 10m umgebaut. Die Halle müsste eine Breite von rund 35m aufweisen. Infos und Angebote können an Andrea Rossi weitergeleitet werden.
+Daniel Berchtold möchte die Ordner der «alten»-Vorstandsprotokolle sowie Ordner mit alten Zeitungsberichten irgendwo unterbringen können. Der Vorstand ist sich einig, dass die Ordner VS-Protokoll im Archivschrank der Gemeinde deponiert werden. Die alten Zeitungsberichte können gelegentlich eingescannt und auf unserer Webseite hochgeladen werden.
+Der Vorstand beschliesst das Menü für die Generalversammlung. Es gibt Ungarisch-Gulasch, Spätzli und Salat. Andrea Rossi wird Marco Fischer fragen, ob er wiederum Crèmeschnitten mitbringen könnte. Daniel Hunziker wird Uschi und Hans-Ruedi einladen und ein Geschenk besorgen.
+Die nächste Vorstandsitzung findet am 12.03.2026, 19.00 Uhr, im Vorfeld der Generalversammlung statt.
+
+Aufgaben:
+Offerte für Kunststoff-Bodenrost einholen - Simon Hediger
+Donatiello Stefano fragen Datum Freundschaftsschiessen - Simon Hediger
+Vereinskleidung an GV mitnehmen - Simon Hediger
+Anfrage max. Höhe Wasserstand bei AGV - Daniel Hunziker
+Uschi und Hans-Ruedi einladen und Geschenk besorgen - Daniel Hunziker
+Rückmeldung Einverständnis Entschädigung BVU (1'000) - Daniel Berchtold
+Entschädigung für den Ersatz des gefällten Baumes - Daniel Berchtold
+Vorschlag Kostenbeteiligung ENIWA - Daniel Berchtold
+Verzicht Empfang ESF Chur - Daniel Berchtold
+Willi Huwyler fragen für Amt als Tagespräsident - Daniel Berchtold
+Speckseite für Christian Matter - Daniel Berchtold
+Weiterleitung Entschädigungsvereinbarung AGSV/Muhen - Andrea Rossi
+Marco Fischer für Crèmeschnitten fragen - Andrea Rossi
+
+Sportschützen Muhen
+Der Aktuar:
+Beat Augsburger`;
+
+        // Load Persistent Configuration
+        whisperWorkerUrl = localStorage.getItem('portal_whisper_worker_url') || 'https://sportschuetzen-whisper.dan-hunziker73.workers.dev/';
+        segmentInterval = parseInt(localStorage.getItem('portal_whisper_interval')) || 600000;
+        
+        workerUrlInput.value = whisperWorkerUrl;
+        segmentSelect.value = segmentInterval;
+
+        // Restore transcripts from LocalStorage
+        const savedTranscripts = localStorage.getItem('mr_active_transcripts');
+        if (savedTranscripts) {
+            try {
+                transcripts = JSON.parse(savedTranscripts);
+                log(`${transcripts.length} transkribierte Segmente aus Speicher geladen.`, 'info');
+                updateTranscriptDisplay();
+            } catch (e) {
+                transcripts = [];
+            }
+        }
+
+        // Listener for input adjustments
+        workerUrlInput.addEventListener('change', () => {
+            whisperWorkerUrl = workerUrlInput.value.trim();
+            localStorage.setItem('portal_whisper_worker_url', whisperWorkerUrl);
+            log(`Whisper-Schnittstelle konfiguriert auf: ${whisperWorkerUrl}`, 'info');
+        });
+
+        segmentSelect.addEventListener('change', () => {
+            segmentInterval = parseInt(segmentSelect.value);
+            localStorage.setItem('portal_whisper_interval', segmentInterval);
+            log(`Segmentierungs-Intervall eingestellt auf: ${segmentInterval === 0 ? 'Nur manuell' : (segmentInterval / 60000) + ' Min.'}`, 'info');
+        });
 
         // Setup Logger
         function log(message, type = 'info') {
@@ -980,7 +1347,39 @@
         btnStart.addEventListener('click', () => {
             log('Starte Aufnahme...', 'info');
             recordedChunks = [];
+            isStoppedManually = false;
+            segmentCounter = transcripts.length > 0 ? transcripts.length + 1 : 1;
 
+            startMediaRecorder();
+
+            // Start timer
+            startTime = Date.now();
+            elapsedTime = 0;
+            isPaused = false;
+            timerInterval = setInterval(updateTimer, 1000);
+
+            // Set up segment rotation timer
+            if (segmentInterval > 0) {
+                log(`Automatischer Segmentwechsel alle ${segmentInterval / 60000} Minuten eingerichtet.`, 'info');
+                segmentTimer = setInterval(() => {
+                    if (mediaRecorder && mediaRecorder.state === 'recording') {
+                        log(`Rotations-Intervall von ${segmentInterval / 60000} Min. erreicht. Wechsle Segment...`, 'info');
+                        mediaRecorder.stop(); // Triggers onstop, which auto-restarts if isStoppedManually is false
+                    }
+                }, segmentInterval);
+            }
+
+            // UI buttons toggle
+            btnStart.disabled = true;
+            btnPause.disabled = false;
+            btnStop.disabled = false;
+            btnSetup.disabled = true;
+            document.getElementById('mode-audio').disabled = true;
+            document.getElementById('mode-video').disabled = true;
+            liveBadge.classList.add('active');
+        });
+
+        function startMediaRecorder() {
             // Audio tracks from mixed node
             const mixedAudioTracks = mixedDestinationNode.stream.getAudioTracks();
 
@@ -989,7 +1388,6 @@
 
             if (recordingMode === 'video') {
                 const screenVideoTracks = screenStream.getVideoTracks();
-                // Combine screen video with mixed audio
                 finalStream = new MediaStream([screenVideoTracks[0], mixedAudioTracks[0]]);
                 mimeType = 'video/webm;codecs=vp9,opus';
                 
@@ -1011,7 +1409,7 @@
                 }
             }
 
-            log(`MimeType für Aufnahme: ${mimeType}`, 'info');
+            log(`MimeType für Segment ${segmentCounter}: ${mimeType}`, 'info');
 
             try {
                 mediaRecorder = new MediaRecorder(finalStream, { mimeType });
@@ -1023,55 +1421,65 @@
                     }
                 };
 
-                mediaRecorder.onstop = () => {
-                    log('Aufnahme vollständig gestoppt. Bereite Datei vor...', 'success');
+                mediaRecorder.onstop = async () => {
+                    log(`MediaRecorder gestoppt. Segment ${segmentCounter} abgeschlossen.`, 'info');
                     
-                    const blob = new Blob(recordedChunks, { type: mimeType });
-                    const fileUrl = URL.createObjectURL(blob);
+                    const audioBlob = new Blob(recordedChunks, { type: mimeType });
+                    recordedChunks = []; // clear chunks
                     
-                    // Show Preview Box
-                    previewPanel.style.display = 'grid';
+                    const currentSeg = segmentCounter;
                     
-                    if (recordingMode === 'video') {
-                        previewVideo.style.display = 'block';
-                        previewAudio.style.display = 'none';
-                        previewVideo.src = fileUrl;
+                    if (audioBlob.size > 0) {
+                        log(`Segment ${currentSeg} aufgezeichnet: ${Math.round(audioBlob.size / 1024)} KB. Sende zur Transkription...`, 'info');
+                        sendAudioToWhisper(audioBlob, currentSeg);
                     } else {
-                        previewAudio.style.display = 'block';
-                        previewVideo.style.display = 'none';
-                        previewAudio.src = fileUrl;
+                        log(`Warnung: Segment ${currentSeg} war leer.`, 'warning');
                     }
 
-                    // Download setup
-                    const fileExt = recordingMode === 'video' ? 'webm' : (mimeType.includes('ogg') ? 'ogg' : 'webm');
-                    btnDownload.href = fileUrl;
-                    btnDownload.download = `MultiSource_Recording_${new Date().toISOString().slice(0,10)}.${fileExt}`;
-                    
-                    log(`Vorschau bereitgestellt. Datei kann heruntergeladen werden.`, 'success');
+                    // Restart if not stopped manually
+                    if (!isStoppedManually) {
+                        try {
+                            segmentCounter++;
+                            log(`Starte Aufnahme für Segment ${segmentCounter}...`, 'info');
+                            mediaRecorder.start(1000);
+                        } catch (err) {
+                            log(`Kritischer Fehler bei der automatischen Fortführung: ${err.message}`, 'error');
+                            stopRecording();
+                        }
+                    } else {
+                        log('Aufnahme vollständig beendet. Bereite Vorschau vor...', 'success');
+                        
+                        // Show Preview Player (loads last segment as representation)
+                        const showBlob = audioBlob;
+                        if (showBlob && showBlob.size > 0) {
+                            const fileUrl = URL.createObjectURL(showBlob);
+                            previewPanel.style.display = 'block';
+                            
+                            if (recordingMode === 'video') {
+                                previewVideo.style.display = 'block';
+                                previewAudio.style.display = 'none';
+                                previewVideo.src = fileUrl;
+                            } else {
+                                previewAudio.style.display = 'block';
+                                previewVideo.style.display = 'none';
+                                previewAudio.src = fileUrl;
+                            }
+
+                            btnDownload.href = fileUrl;
+                            const fileExt = recordingMode === 'video' ? 'webm' : (mimeType.includes('ogg') ? 'ogg' : 'webm');
+                            btnDownload.download = `MultiSource_Recording_LastSegment_${new Date().toISOString().slice(0,10)}.${fileExt}`;
+                            log(`Vorschau bereitgestellt. Letztes Segment kann heruntergeladen werden.`, 'success');
+                        }
+                    }
                 };
 
                 mediaRecorder.start(1000); // chunk every 1 second
-                log('Aufnahme läuft...', 'success');
-
-                // UI buttons toggle
-                btnStart.disabled = true;
-                btnPause.disabled = false;
-                btnStop.disabled = false;
-                btnSetup.disabled = true;
-                document.getElementById('mode-audio').disabled = true;
-                document.getElementById('mode-video').disabled = true;
-                liveBadge.classList.add('active');
-
-                // Start timer
-                startTime = Date.now();
-                elapsedTime = 0;
-                isPaused = false;
-                timerInterval = setInterval(updateTimer, 1000);
+                log(`Segment ${segmentCounter} läuft...`, 'success');
 
             } catch (err) {
                 log(`MediaRecorder Fehler beim Aufnahmestart: ${err.message}`, 'error');
             }
-        });
+        }
 
         // Pause Recording
         btnPause.addEventListener('click', () => {
@@ -1100,7 +1508,18 @@
 
         // Stop Recording
         btnStop.addEventListener('click', () => {
+            stopRecording();
+        });
+
+        function stopRecording() {
             log('Stoppe Aufnahme...', 'info');
+            isStoppedManually = true;
+
+            if (segmentTimer) {
+                clearInterval(segmentTimer);
+                segmentTimer = null;
+            }
+
             if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                 mediaRecorder.stop();
             }
@@ -1113,61 +1532,68 @@
             btnStop.disabled = true;
             btnPause.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
             btnPause.style.background = 'rgba(255, 255, 255, 0.06)';
-        });
+        }
 
         // Reset
         btnReset.addEventListener('click', () => {
-            log('Setze Recorder-Konfiguration zurück...', 'info');
-            
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
+            if (confirm("Möchtest du das gesamte Transkript und das generierte Protokoll löschen und eine neue Sitzung starten?")) {
+                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                    stopRecording();
+                }
+                
+                transcripts = [];
+                localStorage.removeItem('mr_active_transcripts');
+                
+                document.getElementById('transcript-field').value = "";
+                document.getElementById('protocol-field').value = "";
+                
+                updateTranscriptDisplay();
+                
+                elapsedTime = 0;
+                timerDisplay.textContent = '00:00:00';
+                liveBadge.classList.remove('active');
+
+                cleanupStreams();
+                
+                // UI elements reset
+                btnSetup.disabled = false;
+                btnSetup.textContent = 'Quellen anfordern';
+                btnSetup.style.background = 'var(--primary-gradient)';
+                btnSetup.style.color = '#ffffff';
+                btnSetup.style.border = 'none';
+
+                btnStart.disabled = true;
+                btnPause.disabled = true;
+                btnStop.disabled = true;
+
+                document.getElementById('mode-audio').disabled = false;
+                document.getElementById('mode-video').disabled = false;
+
+                volumeMic.disabled = true;
+                volumeSystem.disabled = true;
+                cardMic.classList.remove('active');
+                cardSystem.classList.remove('active');
+                statusMic.textContent = 'Inaktiv';
+                statusMic.classList.remove('active');
+                statusSystem.textContent = 'Inaktiv';
+                statusSystem.classList.remove('active');
+
+                // Visualizer reset
+                if (visualizerAnimationId) {
+                    cancelAnimationFrame(visualizerAnimationId);
+                }
+                const canvas = document.getElementById('visualizer-canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                visualizerPlaceholder.style.opacity = 1;
+
+                // Preview player reset
+                previewPanel.style.display = 'none';
+                previewVideo.src = '';
+                previewAudio.src = '';
+                
+                log('Sitzung und Transkripte erfolgreich zurückgesetzt.', 'success');
             }
-            
-            clearInterval(timerInterval);
-            elapsedTime = 0;
-            timerDisplay.textContent = '00:00:00';
-            liveBadge.classList.remove('active');
-
-            cleanupStreams();
-            
-            // UI elements reset
-            btnSetup.disabled = false;
-            btnSetup.textContent = 'Quellen anfordern';
-            btnSetup.style.background = 'var(--primary-gradient)';
-            btnSetup.style.color = '#ffffff';
-            btnSetup.style.border = 'none';
-
-            btnStart.disabled = true;
-            btnPause.disabled = true;
-            btnStop.disabled = true;
-
-            document.getElementById('mode-audio').disabled = false;
-            document.getElementById('mode-video').disabled = false;
-
-            volumeMic.disabled = true;
-            volumeSystem.disabled = true;
-            cardMic.classList.remove('active');
-            cardSystem.classList.remove('active');
-            statusMic.textContent = 'Inaktiv';
-            statusMic.classList.remove('active');
-            statusSystem.textContent = 'Inaktiv';
-            statusSystem.classList.remove('active');
-
-            // Visualizer reset
-            if (visualizerAnimationId) {
-                cancelAnimationFrame(visualizerAnimationId);
-            }
-            const canvas = document.getElementById('visualizer-canvas');
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            visualizerPlaceholder.style.opacity = 1;
-
-            // Preview player reset
-            previewPanel.style.display = 'none';
-            previewVideo.src = '';
-            previewAudio.src = '';
-            
-            log('Zurücksetzen abgeschlossen. Bereit für neue Quellen.', 'success');
         });
 
         // Cleanup Helper
@@ -1199,6 +1625,246 @@
             const mins = Math.floor((elapsedTime % 3600) / 60).toString().padStart(2, '0');
             const secs = (elapsedTime % 60).toString().padStart(2, '0');
             timerDisplay.textContent = `${hrs}:${mins}:${secs}`;
+        }
+
+        // Sende Audio-Segment an Cloudflare AI (Whisper)
+        async function sendAudioToWhisper(blob, segNum) {
+            const workerUrl = whisperWorkerUrl || 'https://sportschuetzen-whisper.dan-hunziker73.workers.dev/';
+            if (!workerUrl) {
+                log(`Fehler: Cloudflare Whisper Worker URL nicht konfiguriert. Segment ${segNum} wird übersprungen.`, 'error');
+                return;
+            }
+
+            const maxRetries = 3;
+            let attempt = 0;
+            let success = false;
+            let resultText = "";
+
+            const formData = new FormData();
+            formData.append('file', blob, `segment_${segNum}.webm`);
+
+            while (attempt < maxRetries && !success) {
+                attempt++;
+                if (attempt > 1) {
+                    const delay = Math.pow(2, attempt) * 1000;
+                    log(`Sende-Fehler bei Segment ${segNum}. Versuch ${attempt}/${maxRetries} in ${delay/1000}s...`, 'warning');
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+
+                log(`[Versuch ${attempt}/${maxRetries}] Sende Segment ${segNum} (${Math.round(blob.size / 1024)} KB) an Cloudflare Whisper AI...`, 'info');
+
+                try {
+                    const response = await fetch(workerUrl, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Server antwortete mit Status HTTP ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.text && result.text.trim()) {
+                        resultText = result.text.trim();
+                        success = true;
+                        log(`Segment ${segNum} erfolgreich transkribiert!`, 'success');
+                        log(`Text Segment ${segNum}: "${resultText.substring(0, 80)}..."`, 'info');
+                    } else {
+                        log(`Segment ${segNum} verarbeitet, aber kein Text erkannt.`, 'warning');
+                        success = true; // No text is success (just silence)
+                    }
+                } catch (error) {
+                    log(`Fehler bei Übertragung von Segment ${segNum}: ${error.message}`, 'error');
+                }
+            }
+
+            if (success) {
+                if (resultText) {
+                    transcripts.push(resultText);
+                    localStorage.setItem('mr_active_transcripts', JSON.stringify(transcripts));
+                    updateTranscriptDisplay();
+                }
+            } else {
+                log(`Kritischer Fehler: Segment ${segNum} konnte nach ${maxRetries} Versuchen nicht transkribiert werden.`, 'error');
+            }
+        }
+
+        // Transkript- und Prompt-Anzeigen aktualisieren
+        function updateTranscriptDisplay() {
+            const fullText = transcripts.join('\n\n');
+            
+            const transcriptField = document.getElementById('transcript-field');
+            if (transcriptField) {
+                transcriptField.value = fullText || "Warte auf transkribierte Segmente aus Whisper...";
+            }
+
+            const promptField = document.getElementById('prompt-field');
+            if (promptField) {
+                promptField.value = generatePromptText(fullText);
+            }
+        }
+
+        // Gemini Prompt für Protokollerstellung generieren
+        function generatePromptText(transcript) {
+            return `Hier ist das gesammelte Transkript unseres Meetings (automatisch aus dem Schweizerdeutschen übersetzt). Bitte generiere daraus ein präzises, professionelles Ergebnisprotokoll im Schweizer Hochdeutsch (ohne 'ß'). Stelle sicher, dass Namen korrekt geschrieben sind.
+
+WICHTIG: Verwende exakt das folgende Muster-Protokoll der Sportschützen Muhen als Stil-, Format- und Layoutvorlage für das fertige Protokoll:
+
+--- MUSTER-PROTOKOLL ANFANG ---
+${PROTOKOLL_MUSTER}
+--- MUSTER-PROTOKOLL ENDE ---
+
+Richte dich bei der Formatierung und Gliederung streng nach diesem Muster:
+1. Header: Nummer der Vorstandsitzung, Ort, Datum, Uhrzeit und Teilnehmer (in gleicher Tabulator- oder Listenoptik).
+2. Traktandenliste: Nummerierte Liste der behandelten Themen.
+3. Detailinhalt pro Traktandum: Textabsätze mit Beschlüssen, Diskussionspunkten und den jeweils vereinbarten Aufgaben.
+4. Aufgabenliste am Ende: Eine saubere, übersichtliche Liste ("Aufgaben:") mit allen Aufgaben und den jeweils verantwortlichen Personen.
+5. Signatur am Ende ("Sportschützen Muhen / Der Aktuar: [Name]").
+
+Hier ist das neue Transkript, das du verarbeiten sollst:
+${transcript || '[Noch kein Transkript vorhanden. Starten Sie die Aufnahme und sprechen Sie...]'}`;
+        }
+
+        // Tab Switching
+        window.switchTab = function(tabId) {
+            document.querySelectorAll('.tab-trigger').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+
+            const activeTrigger = document.querySelector(`[onclick="switchTab('${tabId}')"]`);
+            if (activeTrigger) activeTrigger.classList.add('active');
+
+            const activePane = document.getElementById(tabId);
+            if (activePane) activePane.classList.add('active');
+        }
+
+        // Clipboard Helpers
+        window.copyPromptText = function() {
+            const field = document.getElementById('prompt-field');
+            field.select();
+            navigator.clipboard.writeText(field.value);
+            log('Gemini Prompt in die Zwischenablage kopiert!', 'success');
+        }
+
+        window.copyTranscriptText = function() {
+            const field = document.getElementById('transcript-field');
+            field.select();
+            navigator.clipboard.writeText(field.value);
+            log('Roh-Transkript in die Zwischenablage kopiert!', 'success');
+        }
+
+        window.copyProtocolText = function() {
+            const field = document.getElementById('protocol-field');
+            field.select();
+            navigator.clipboard.writeText(field.value);
+            log('KI-Protokoll in die Zwischenablage kopiert!', 'success');
+        }
+
+        // Download Text Helpers
+        window.downloadTranscriptText = function() {
+            const fullText = transcripts.join('\n\n');
+            if (!fullText) {
+                log('Kein Transkript zum Herunterladen vorhanden.', 'warning');
+                return;
+            }
+            const blob = new Blob([fullText], { type: 'text/plain;charset=utf-8' });
+            triggerDownload(blob, `Roh_Transkript_Sitzung_${new Date().toISOString().slice(0,10)}.txt`);
+        }
+
+        window.downloadProtocolText = function() {
+            const val = document.getElementById('protocol-field').value.trim();
+            if (!val) {
+                log('Kein Protokoll zum Herunterladen vorhanden.', 'warning');
+                return;
+            }
+            const blob = new Blob([val], { type: 'text/plain;charset=utf-8' });
+            triggerDownload(blob, `Ergebnisprotokoll_Sitzung_${new Date().toISOString().slice(0,10)}.txt`);
+        }
+
+        function triggerDownload(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 100);
+            log(`Datei ${filename} erfolgreich heruntergeladen.`, 'success');
+        }
+
+        // API Fetch Helper (CSRF & Portal API Integration)
+        const WORKER_URL = 'https://v1-vorstand-api.dan-hunziker73.workers.dev/';
+        
+        async function apiFetch(module, paramsOrObj, options = {}) {
+            const role = localStorage.getItem('portal_role') || 'vorstand';
+            const method = (options.method || 'GET').toUpperCase();
+            
+            const headers = {
+                'X-User-Role': role,
+                'Content-Type': 'application/json'
+            };
+            
+            const qs = (typeof paramsOrObj === 'string') ? paramsOrObj : new URLSearchParams(paramsOrObj || {}).toString();
+            let url;
+            let fetchOptions = { method, headers };
+            
+            if (method === 'POST') {
+                if (options.body) {
+                    url = WORKER_URL + "?module=" + module + (qs ? "&" + qs : "");
+                    fetchOptions.body = options.body;
+                } else {
+                    url = WORKER_URL + "?module=" + module;
+                    fetchOptions.body = (typeof paramsOrObj === 'object') ? JSON.stringify(paramsOrObj) : String(paramsOrObj || '');
+                }
+            } else {
+                url = WORKER_URL + "?module=" + module + (qs ? "&" + qs : "");
+            }
+            
+            return fetch(url, fetchOptions);
+        }
+
+        // Automatic Protocol Generation using Gemini API
+        window.generateProtocolAutomatically = async function() {
+            const promptText = document.getElementById('prompt-field').value;
+            const protocolField = document.getElementById('protocol-field');
+
+            if (!promptText || promptText.includes('[Noch kein Transkript')) {
+                log('Fehler: Kein Transkript für die Protokollerstellung vorhanden. Bitte nehmen Sie zuerst ein Gespräch auf.', 'warning');
+                return;
+            }
+
+            log('Verbindung mit Gemini API wird hergestellt. Sende Prompt...', 'info');
+            const btnGen = document.getElementById('btn-generate-protocol');
+            btnGen.disabled = true;
+            btnGen.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Generiere Protokoll...';
+
+            try {
+                const response = await apiFetch('news', 'action=generate_protocol', {
+                    method: 'POST',
+                    body: JSON.stringify({ prompt: promptText })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Verbindung zur API fehlgeschlagen (HTTP ${response.status})`);
+                }
+
+                const data = await response.json();
+                if (data.success && data.text) {
+                    protocolField.value = data.text.trim();
+                    log('Protokoll erfolgreich über die Gemini-API generiert!', 'success');
+                } else {
+                    throw new Error(data.error || 'Ungültiges API-Antwortformat');
+                }
+            } catch (err) {
+                log(`Fehler bei automatischer Generierung: ${err.message}`, 'error');
+                log('Tipp: Verwenden Sie die manuelle Methode. Kopieren Sie den Gemini Prompt aus Tab 1, fügen Sie ihn in Gemini Advanced ein und fügen Sie das Ergebnis hier ein.', 'info');
+            } finally {
+                btnGen.disabled = false;
+                btnGen.innerHTML = '<i class="fa-solid fa-cogs"></i> Protokoll automatisch generieren';
+            }
         }
     </script>
 </body>
