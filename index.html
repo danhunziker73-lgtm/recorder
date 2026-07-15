@@ -811,22 +811,28 @@
                     return null;
                 });
 
-                // 2. Get Screen share with system audio
+                // 2. Get Screen share with system audio (using standard audio: true for max compatibility)
                 log('Fordere Bildschirmübertragung an (Systemsound aktivieren!)...', 'info');
-                screenStream = await navigator.mediaDevices.getDisplayMedia({
-                    video: true,
-                    audio: {
-                        echoCancellation: false,
-                        noiseSuppression: false,
-                        autoGainControl: false
-                    }
-                }).catch(err => {
-                    log(`Bildschirmübertragung abgebrochen oder verweigert: ${err.message}`, 'error');
-                    return null;
-                });
+                try {
+                    screenStream = await navigator.mediaDevices.getDisplayMedia({
+                        video: true,
+                        audio: true
+                    });
+                } catch (err) {
+                    log(`Bildschirmübertragung mit Audio fehlgeschlagen: ${err.message}. Versuche ohne Audio...`, 'warning');
+                    // Fallback to video-only if audio capture constraints fail or are unsupported
+                    screenStream = await navigator.mediaDevices.getDisplayMedia({
+                        video: true
+                    }).catch(err2 => {
+                        log(`Bildschirmübertragung komplett fehlgeschlagen: ${err2.message}`, 'error');
+                        return null;
+                    });
+                }
 
                 if (!screenStream) {
                     log('Zwingend erforderliche Bildschirmquelle fehlt. Abbruch.', 'error');
+                    statusSystem.textContent = 'Fehler';
+                    statusSystem.style.color = 'var(--danger)';
                     cleanupStreams();
                     btnSetup.disabled = false;
                     return;
@@ -853,6 +859,11 @@
                     statusMic.classList.add('active');
                     log(`Mikrofon verbunden: ${micStream.getAudioTracks()[0].label}`, 'success');
                 } else {
+                    volumeMic.disabled = true;
+                    cardMic.classList.remove('active');
+                    statusMic.textContent = 'Kein Ton';
+                    statusMic.style.color = 'var(--danger)';
+                    statusMic.style.background = 'rgba(239, 68, 68, 0.15)';
                     log('Aufnahme ohne Mikrofon konfiguriert (nur Systemsound)', 'warning');
                 }
 
@@ -864,6 +875,8 @@
                     statusSystem.classList.add('active');
                     log(`Systemsound-Quelle verbunden: ${systemAudioTracks[0].label}`, 'success');
                 } else {
+                    volumeSystem.disabled = true;
+                    cardSystem.classList.remove('active');
                     log('Achtung: Kein Systemsound freigegeben. Bitte stellen Sie sicher, dass das Kontrollkästchen "Systemaudio teilen" bei der Bildschirmauswahl aktiviert wurde!', 'warning');
                     statusSystem.textContent = 'Kein Ton';
                     statusSystem.style.color = 'var(--danger)';
@@ -872,6 +885,10 @@
 
             } catch (err) {
                 log(`Allgemeiner Fehler bei der Quelleneinrichtung: ${err.message}`, 'error');
+                statusMic.textContent = 'Fehler';
+                statusMic.style.color = 'var(--danger)';
+                statusSystem.textContent = 'Fehler';
+                statusSystem.style.color = 'var(--danger)';
                 cleanupStreams();
                 btnSetup.disabled = false;
             }
@@ -895,11 +912,10 @@
                 micGainNode.connect(analyserNode);
             }
 
-            // Connect System Audio source
+            // Connect System Audio source (directly from original screenStream)
             const systemTracks = screenStream.getAudioTracks();
             if (systemTracks.length > 0) {
-                const systemAudioStream = new MediaStream([systemTracks[0]]);
-                screenSourceNode = audioCtx.createMediaStreamSource(systemAudioStream);
+                screenSourceNode = audioCtx.createMediaStreamSource(screenStream);
                 screenGainNode = audioCtx.createGain();
                 screenGainNode.gain.value = parseFloat(volumeSystem.value);
 
