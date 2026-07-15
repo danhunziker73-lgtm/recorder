@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Multi-Source Recorder & Mixer</title>
+    <!-- Google Fonts: Outfit & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0b0d19 0%, #151833 50%, #201735 100%);
+            --panel-bg: rgba(26, 29, 58, 0.45);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --primary: #8b5cf6;
+            --primary-glow: rgba(139, 92, 246, 0.4);
+            --primary-gradient: linear-gradient(135deg, #a78bfa, #8b5cf6);
+            --secondary: #06b6d4;
+            --secondary-glow: rgba(6, 182, 212, 0.4);
+            --secondary-gradient: linear-gradient(135deg, #22d3ee, #06b6d4);
+            --success: #10b981;
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.4);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --font-main: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphic Container */
+        .app-container {
+            width: 100%;
+            max-width: 1100px;
+            background: rgba(17, 19, 40, 0.6);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid var(--panel-border);
+            border-radius: 28px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                        0 0 40px rgba(139, 92, 246, 0.05);
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header design */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 1.5rem;
+        }
+
+        .logo-section h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 30%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-section h1 i {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px var(--primary-glow));
+        }
+
+        .logo-section p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 4px;
+            font-weight: 300;
+        }
+
+        .badge-live {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .badge-live.active {
+            opacity: 1;
+            animation: pulse-border 1.5s infinite;
+        }
+
+        .badge-live::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: var(--danger);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px var(--danger);
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        /* Layout columns */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1.8fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card panels */
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 20px;
+            padding: 1.8rem;
+            box-shadow: inset 0 20px 40px rgba(255, 255, 255, 0.02);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .panel:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .panel-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 1.2rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-title i {
+            color: var(--primary);
+        }
+
+        /* Source Mixer items */
+        .source-card {
+            background: rgba(15, 17, 35, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .source-card.active {
+            border-color: rgba(139, 92, 246, 0.25);
+            background: rgba(139, 92, 246, 0.03);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .source-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .source-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .source-name i {
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .source-mic i { color: var(--primary); }
+        .source-system i { color: var(--secondary); }
+
+        .status-pill {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-weight: 600;
+            background: rgba(255,255,255,0.06);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-pill.active {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+        }
+
+        /* Gain/Volume Slider styles */
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .volume-control span {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            width: 38px;
+            text-align: right;
+        }
+
+        .slider-wrapper {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            transition: background 0.3s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: var(--primary);
+        }
+
+        .source-card.active input[type="range"]::-webkit-slider-thumb {
+            background: var(--primary);
+        }
+
+        .source-card.active.source-system input[type="range"]::-webkit-slider-thumb {
+            background: var(--secondary);
+        }
+
+        /* Controls Panel */
+        .controls-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .timer-display {
+            font-family: var(--font-mono);
+            font-size: 3.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 1.5rem 0;
+            background: linear-gradient(180deg, #ffffff 40%, rgba(255,255,255,0.6) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+            letter-spacing: -2px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            font-family: var(--font-main);
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 14px 24px;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: #ffffff;
+            box-shadow: 0 8px 25px -5px var(--primary-glow);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px -5px var(--primary-glow);
+            filter: brightness(1.1);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #ffffff;
+            box-shadow: 0 8px 25px -5px var(--danger-glow);
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px -5px var(--danger-glow);
+            filter: brightness(1.1);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Config / Modes */
+        .option-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .option-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.6rem;
+            display: block;
+        }
+
+        .mode-toggle-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 4px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .mode-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .mode-btn.active {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Visualizer Panel */
+        .visualizer-container {
+            width: 100%;
+            height: 140px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.04);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #visualizer-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .visualizer-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Activity console */
+        .log-panel {
+            grid-column: span 2;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 900px) {
+            .log-panel {
+                grid-column: span 1;
+            }
+        }
+
+        .console-container {
+            background: rgba(10, 11, 23, 0.7);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 14px;
+            padding: 1rem;
+            height: 140px;
+            overflow-y: auto;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            line-height: 1.5;
+            color: #d1d5db;
+        }
+
+        .console-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .console-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .console-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            word-break: break-all;
+        }
+
+        .log-entry .time {
+            color: var(--text-muted);
+            margin-right: 6px;
+        }
+
+        .log-entry.info { color: #a78bfa; }
+        .log-entry.success { color: #10b981; }
+        .log-entry.warning { color: #f59e0b; }
+        .log-entry.error { color: #ef4444; }
+
+        /* Recording Player Preview Box */
+        .preview-panel {
+            background: rgba(10, 11, 23, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            padding: 1.2rem;
+            margin-top: 1.5rem;
+            display: none;
+            animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .preview-header h6 {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .preview-media {
+            width: 100%;
+            border-radius: 10px;
+            background: #000;
+            outline: none;
+            max-height: 220px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <div class="logo-section">
+                <h1><i class="fa-solid fa-square-poll-vertical"></i> Multi-Source Mixer Recorder</h1>
+                <p>Nimm Systemsound (getDisplayMedia) und Mikrofon synchronisiert auf</p>
+            </div>
+            <div id="live-badge" class="badge-live">Live Aufzeichnung</div>
+        </header>
+
+        <div class="grid-layout">
+            
+            <!-- LEFT PANEL: SOURCES AND VOLUMES -->
+            <div class="panel">
+                <div class="panel-title">
+                    <i class="fa-solid fa-sliders"></i>
+                    Audio Mixer-Konsole
+                </div>
+
+                <div class="option-group">
+                    <span class="option-label">1. Quellen freigeben & aktivieren</span>
+                    <button id="btn-setup" class="btn btn-primary w-100" style="margin-bottom: 1.2rem;">
+                        <i class="fa-solid fa-satellite-dish"></i> Quellen anfordern
+                    </button>
+                </div>
+
+                <div class="option-group">
+                    <span class="option-label">2. Mix Pegel anpassen</span>
+                    
+                    <!-- Microphone Card -->
+                    <div id="card-mic" class="source-card">
+                        <div class="source-card-header">
+                            <div class="source-name source-mic">
+                                <i class="fa-solid fa-microphone"></i>
+                                Mikrofon
+                            </div>
+                            <div id="status-mic" class="status-pill">Inaktiv</div>
+                        </div>
+                        <div class="volume-control">
+                            <i class="fa-solid fa-volume-low text-muted"></i>
+                            <div class="slider-wrapper">
+                                <input type="range" id="volume-mic" min="0" max="2" step="0.05" value="1" disabled>
+                            </div>
+                            <span id="label-volume-mic">100%</span>
+                        </div>
+                    </div>
+
+                    <!-- System Audio Card -->
+                    <div id="card-system" class="source-card">
+                        <div class="source-card-header">
+                            <div class="source-name source-system">
+                                <i class="fa-solid fa-desktop"></i>
+                                Systemsound (Screen Share)
+                            </div>
+                            <div id="status-system" class="status-pill">Inaktiv</div>
+                        </div>
+                        <div class="volume-control">
+                            <i class="fa-solid fa-volume-low text-muted"></i>
+                            <div class="slider-wrapper">
+                                <input type="range" id="volume-system" min="0" max="2" step="0.05" value="1" disabled>
+                            </div>
+                            <span id="label-volume-system">100%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: RECORDER ACTIONS AND VISUALIZATION -->
+            <div class="panel controls-panel">
+                <div>
+                    <div class="panel-title">
+                        <i class="fa-solid fa-circle-dot"></i>
+                        Steuerung
+                    </div>
+
+                    <div class="option-group">
+                        <span class="option-label">Aufnahmemodus</span>
+                        <div class="mode-toggle-group">
+                            <button id="mode-audio" class="mode-btn active" onclick="setRecordingMode('audio')">
+                                <i class="fa-solid fa-file-audio"></i> Nur Audio
+                            </button>
+                            <button id="mode-video" class="mode-btn" onclick="setRecordingMode('video')">
+                                <i class="fa-solid fa-video"></i> Video + Audio
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="timer-display" id="timer">00:00:00</div>
+
+                    <!-- Audio Visualizer Canvas -->
+                    <div class="visualizer-container">
+                        <canvas id="visualizer-canvas"></canvas>
+                        <div id="visualizer-placeholder" class="visualizer-placeholder">
+                            <i class="fa-solid fa-wave-square fa-lg"></i>
+                            <span>Warte auf aktive Audioquellen...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button id="btn-start" class="btn btn-primary" disabled>
+                        <i class="fa-solid fa-circle"></i> Aufnahme starten
+                    </button>
+                    <div style="display: flex; gap: 0.8rem;">
+                        <button id="btn-pause" class="btn btn-secondary flex-grow-1" style="flex: 1;" disabled>
+                            <i class="fa-solid fa-pause"></i> Pause
+                        </button>
+                        <button id="btn-stop" class="btn btn-danger flex-grow-1" style="flex: 1;" disabled>
+                            <i class="fa-solid fa-square"></i> Beenden
+                        </button>
+                    </div>
+                    <button id="btn-reset" class="btn btn-secondary">
+                        <i class="fa-solid fa-rotate-left"></i> Zurücksetzen
+                    </button>
+                </div>
+            </div>
+
+            <!-- PREVIEW PANEL -->
+            <div id="preview-panel" class="panel preview-panel grid-layout" style="grid-column: span 2; display: none;">
+                <div class="preview-header">
+                    <h6>Vorschau der Aufzeichnung</h6>
+                    <a id="btn-download" class="btn btn-primary btn-sm" style="padding: 6px 14px; font-size: 0.85rem;" download="aufnahme.webm">
+                        <i class="fa-solid fa-download"></i> Herunterladen
+                    </a>
+                </div>
+                <div style="grid-column: span 2;">
+                    <video id="preview-video" class="preview-media" controls></video>
+                    <audio id="preview-audio" class="preview-media" style="display: none;" controls></audio>
+                </div>
+            </div>
+
+            <!-- LOG LOG PANEL -->
+            <div class="panel log-panel">
+                <div class="panel-title">
+                    <i class="fa-solid fa-rectangle-list"></i>
+                    Aktivitätsprotokoll
+                </div>
+                <div class="console-container" id="log-console">
+                    <div class="log-entry info"><span class="time">--:--:--</span> Mixer initialisiert. Klicken Sie auf "Quellen anfordern", um die Audio/Video-Aufnahme einzurichten.</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Media streams
+        let micStream = null;
+        let screenStream = null;
+        let recordStream = null;
+
+        // Audio Context and Nodes
+        let audioCtx = null;
+        let micSourceNode = null;
+        let screenSourceNode = null;
+        let micGainNode = null;
+        let screenGainNode = null;
+        let mixedDestinationNode = null;
+        let analyserNode = null;
+
+        // Recorder State
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let recordingMode = 'audio'; // 'audio' or 'video'
+        let timerInterval = null;
+        let startTime = 0;
+        let elapsedTime = 0; // in seconds
+        let isPaused = false;
+
+        // Visualizer config
+        let visualizerAnimationId = null;
+
+        // DOM elements
+        const btnSetup = document.getElementById('btn-setup');
+        const btnStart = document.getElementById('btn-start');
+        const btnPause = document.getElementById('btn-pause');
+        const btnStop = document.getElementById('btn-stop');
+        const btnReset = document.getElementById('btn-reset');
+        const btnDownload = document.getElementById('btn-download');
+
+        const cardMic = document.getElementById('card-mic');
+        const cardSystem = document.getElementById('card-system');
+        const statusMic = document.getElementById('status-mic');
+        const statusSystem = document.getElementById('status-system');
+
+        const volumeMic = document.getElementById('volume-mic');
+        const volumeSystem = document.getElementById('volume-system');
+        const labelVolumeMic = document.getElementById('label-volume-mic');
+        const labelVolumeSystem = document.getElementById('label-volume-system');
+
+        const timerDisplay = document.getElementById('timer');
+        const liveBadge = document.getElementById('live-badge');
+        const visualizerPlaceholder = document.getElementById('visualizer-placeholder');
+        const logConsole = document.getElementById('log-console');
+
+        const previewPanel = document.getElementById('preview-panel');
+        const previewVideo = document.getElementById('preview-video');
+        const previewAudio = document.getElementById('preview-audio');
+
+        // Setup Logger
+        function log(message, type = 'info') {
+            const time = new Date().toLocaleTimeString('de-CH');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.innerHTML = `<span class="time">[${time}]</span> ${message}`;
+            logConsole.appendChild(entry);
+            logConsole.scrollTop = logConsole.scrollHeight;
+            console.log(`[MixerRecorder] [${type}] ${message}`);
+        }
+
+        // Change mode
+        window.setRecordingMode = function(mode) {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                log('Modusänderung während aktiver Aufnahme nicht möglich!', 'warning');
+                return;
+            }
+            recordingMode = mode;
+            document.getElementById('mode-audio').classList.toggle('active', mode === 'audio');
+            document.getElementById('mode-video').classList.toggle('active', mode === 'video');
+            log(`Aufnahmemodus geändert zu: ${mode === 'audio' ? 'Nur Audio (MP3/WebM)' : 'Video + Audio (WebM)'}`, 'info');
+        }
+
+        // Event listener for Setup
+        btnSetup.addEventListener('click', setupStreams);
+
+        // Event listener for Volume Sliders
+        volumeMic.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            labelVolumeMic.textContent = `${Math.round(val * 100)}%`;
+            if (micGainNode) {
+                micGainNode.gain.value = val;
+            }
+        });
+
+        volumeSystem.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            labelVolumeSystem.textContent = `${Math.round(val * 100)}%`;
+            if (screenGainNode) {
+                screenGainNode.gain.value = val;
+            }
+        });
+
+        // Initialize Audio context and streams
+        async function setupStreams() {
+            log('Fordere Medienquellen an...', 'info');
+            btnSetup.disabled = true;
+
+            try {
+                // 1. Get Microphone stream
+                log('Fordere Mikrofonzugriff an...', 'info');
+                micStream = await navigator.mediaDevices.getUserMedia({ audio: true }).catch(err => {
+                    log(`Mikrofon-Zugriff verweigert oder Fehler: ${err.message}`, 'warning');
+                    return null;
+                });
+
+                // 2. Get Screen share with system audio
+                log('Fordere Bildschirmübertragung an (Systemsound aktivieren!)...', 'info');
+                screenStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: true,
+                    audio: {
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        autoGainControl: false
+                    }
+                }).catch(err => {
+                    log(`Bildschirmübertragung abgebrochen oder verweigert: ${err.message}`, 'error');
+                    return null;
+                });
+
+                if (!screenStream) {
+                    log('Zwingend erforderliche Bildschirmquelle fehlt. Abbruch.', 'error');
+                    cleanupStreams();
+                    btnSetup.disabled = false;
+                    return;
+                }
+
+                // Initialize Web Audio Mixer
+                initAudioMixer();
+
+                // Start Visualizer
+                startVisualizer();
+
+                // UI adjustments
+                btnSetup.textContent = 'Quellen verbunden';
+                btnSetup.style.background = 'rgba(16, 185, 129, 0.15)';
+                btnSetup.style.color = 'var(--success)';
+                btnSetup.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                btnStart.disabled = false;
+
+                // Enable range sliders if source exists
+                if (micStream) {
+                    volumeMic.disabled = false;
+                    cardMic.classList.add('active');
+                    statusMic.textContent = 'Aktiv';
+                    statusMic.classList.add('active');
+                    log(`Mikrofon verbunden: ${micStream.getAudioTracks()[0].label}`, 'success');
+                } else {
+                    log('Aufnahme ohne Mikrofon konfiguriert (nur Systemsound)', 'warning');
+                }
+
+                const systemAudioTracks = screenStream.getAudioTracks();
+                if (systemAudioTracks.length > 0) {
+                    volumeSystem.disabled = false;
+                    cardSystem.classList.add('active');
+                    statusSystem.textContent = 'Aktiv';
+                    statusSystem.classList.add('active');
+                    log(`Systemsound-Quelle verbunden: ${systemAudioTracks[0].label}`, 'success');
+                } else {
+                    log('Achtung: Kein Systemsound freigegeben. Bitte stellen Sie sicher, dass das Kontrollkästchen "Systemaudio teilen" bei der Bildschirmauswahl aktiviert wurde!', 'warning');
+                    statusSystem.textContent = 'Kein Ton';
+                    statusSystem.style.color = 'var(--danger)';
+                    statusSystem.style.background = 'rgba(239, 68, 68, 0.15)';
+                }
+
+            } catch (err) {
+                log(`Allgemeiner Fehler bei der Quelleneinrichtung: ${err.message}`, 'error');
+                cleanupStreams();
+                btnSetup.disabled = false;
+            }
+        }
+
+        // Setup Web Audio nodes
+        function initAudioMixer() {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            mixedDestinationNode = audioCtx.createMediaStreamDestination();
+            analyserNode = audioCtx.createAnalyser();
+            analyserNode.fftSize = 256;
+
+            // Connect Mic Source
+            if (micStream && micStream.getAudioTracks().length > 0) {
+                micSourceNode = audioCtx.createMediaStreamSource(micStream);
+                micGainNode = audioCtx.createGain();
+                micGainNode.gain.value = parseFloat(volumeMic.value);
+                
+                micSourceNode.connect(micGainNode);
+                micGainNode.connect(mixedDestinationNode);
+                micGainNode.connect(analyserNode);
+            }
+
+            // Connect System Audio source
+            const systemTracks = screenStream.getAudioTracks();
+            if (systemTracks.length > 0) {
+                const systemAudioStream = new MediaStream([systemTracks[0]]);
+                screenSourceNode = audioCtx.createMediaStreamSource(systemAudioStream);
+                screenGainNode = audioCtx.createGain();
+                screenGainNode.gain.value = parseFloat(volumeSystem.value);
+
+                screenSourceNode.connect(screenGainNode);
+                screenGainNode.connect(mixedDestinationNode);
+                screenGainNode.connect(analyserNode);
+            }
+
+            log('Web Audio Mixer erfolgreich initialisiert und Pegel geschaltet.', 'success');
+        }
+
+        // Canvas Visualizer
+        function startVisualizer() {
+            visualizerPlaceholder.style.opacity = 0;
+            const canvas = document.getElementById('visualizer-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Adjust canvas size
+            function resizeCanvas() {
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = canvas.parentElement.clientHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            const bufferLength = analyserNode.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            function draw() {
+                visualizerAnimationId = requestAnimationFrame(draw);
+                analyserNode.getByteFrequencyData(dataArray);
+
+                ctx.fillStyle = 'rgba(21, 24, 51, 0.4)'; // Clear canvas
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const barWidth = (canvas.width / bufferLength) * 2.5;
+                let barHeight;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                    barHeight = dataArray[i] / 1.7; // scaling
+
+                    // Multi-source glowing gradient colors
+                    const r = 139 - (i * 2);
+                    const g = 92 + (i * 4);
+                    const b = 246;
+
+                    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${barHeight / 100})`;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 0.5)`;
+                    
+                    // Draw rounded bars
+                    ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
+
+                    x += barWidth + 1;
+                }
+            }
+            draw();
+        }
+
+        // Start Recording
+        btnStart.addEventListener('click', () => {
+            log('Starte Aufnahme...', 'info');
+            recordedChunks = [];
+
+            // Audio tracks from mixed node
+            const mixedAudioTracks = mixedDestinationNode.stream.getAudioTracks();
+
+            let finalStream;
+            let mimeType;
+
+            if (recordingMode === 'video') {
+                const screenVideoTracks = screenStream.getVideoTracks();
+                // Combine screen video with mixed audio
+                finalStream = new MediaStream([screenVideoTracks[0], mixedAudioTracks[0]]);
+                mimeType = 'video/webm;codecs=vp9,opus';
+                
+                if (!MediaRecorder.isTypeSupported(mimeType)) {
+                    mimeType = 'video/webm;codecs=vp8,opus';
+                }
+                if (!MediaRecorder.isTypeSupported(mimeType)) {
+                    mimeType = 'video/mp4';
+                }
+            } else {
+                finalStream = new MediaStream([mixedAudioTracks[0]]);
+                mimeType = 'audio/webm;codecs=opus';
+
+                if (!MediaRecorder.isTypeSupported(mimeType)) {
+                    mimeType = 'audio/ogg;codecs=opus';
+                }
+                if (!MediaRecorder.isTypeSupported(mimeType)) {
+                    mimeType = 'audio/mp4';
+                }
+            }
+
+            log(`MimeType für Aufnahme: ${mimeType}`, 'info');
+
+            try {
+                mediaRecorder = new MediaRecorder(finalStream, { mimeType });
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data && event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                        log(`Chunk empfangen: ${Math.round(event.data.size / 1024)} KB`, 'info');
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    log('Aufnahme vollständig gestoppt. Bereite Datei vor...', 'success');
+                    
+                    const blob = new Blob(recordedChunks, { type: mimeType });
+                    const fileUrl = URL.createObjectURL(blob);
+                    
+                    // Show Preview Box
+                    previewPanel.style.display = 'grid';
+                    
+                    if (recordingMode === 'video') {
+                        previewVideo.style.display = 'block';
+                        previewAudio.style.display = 'none';
+                        previewVideo.src = fileUrl;
+                    } else {
+                        previewAudio.style.display = 'block';
+                        previewVideo.style.display = 'none';
+                        previewAudio.src = fileUrl;
+                    }
+
+                    // Download setup
+                    const fileExt = recordingMode === 'video' ? 'webm' : (mimeType.includes('ogg') ? 'ogg' : 'webm');
+                    btnDownload.href = fileUrl;
+                    btnDownload.download = `MultiSource_Recording_${new Date().toISOString().slice(0,10)}.${fileExt}`;
+                    
+                    log(`Vorschau bereitgestellt. Datei kann heruntergeladen werden.`, 'success');
+                };
+
+                mediaRecorder.start(1000); // chunk every 1 second
+                log('Aufnahme läuft...', 'success');
+
+                // UI buttons toggle
+                btnStart.disabled = true;
+                btnPause.disabled = false;
+                btnStop.disabled = false;
+                btnSetup.disabled = true;
+                document.getElementById('mode-audio').disabled = true;
+                document.getElementById('mode-video').disabled = true;
+                liveBadge.classList.add('active');
+
+                // Start timer
+                startTime = Date.now();
+                elapsedTime = 0;
+                isPaused = false;
+                timerInterval = setInterval(updateTimer, 1000);
+
+            } catch (err) {
+                log(`MediaRecorder Fehler beim Aufnahmestart: ${err.message}`, 'error');
+            }
+        });
+
+        // Pause Recording
+        btnPause.addEventListener('click', () => {
+            if (!mediaRecorder) return;
+
+            if (isPaused) {
+                // Resume
+                mediaRecorder.resume();
+                isPaused = false;
+                btnPause.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+                btnPause.style.background = 'rgba(255, 255, 255, 0.06)';
+                log('Aufnahme fortgesetzt.', 'info');
+                // Restart timer
+                startTime = Date.now() - (elapsedTime * 1000);
+                timerInterval = setInterval(updateTimer, 1000);
+            } else {
+                // Pause
+                mediaRecorder.pause();
+                isPaused = true;
+                btnPause.innerHTML = '<i class="fa-solid fa-play"></i> Fortsetzen';
+                btnPause.style.background = 'rgba(139, 92, 246, 0.2)';
+                log('Aufnahme pausiert.', 'info');
+                clearInterval(timerInterval);
+            }
+        });
+
+        // Stop Recording
+        btnStop.addEventListener('click', () => {
+            log('Stoppe Aufnahme...', 'info');
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+
+            clearInterval(timerInterval);
+            liveBadge.classList.remove('active');
+            
+            btnStart.disabled = false;
+            btnPause.disabled = true;
+            btnStop.disabled = true;
+            btnPause.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+            btnPause.style.background = 'rgba(255, 255, 255, 0.06)';
+        });
+
+        // Reset
+        btnReset.addEventListener('click', () => {
+            log('Setze Recorder-Konfiguration zurück...', 'info');
+            
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+            
+            clearInterval(timerInterval);
+            elapsedTime = 0;
+            timerDisplay.textContent = '00:00:00';
+            liveBadge.classList.remove('active');
+
+            cleanupStreams();
+            
+            // UI elements reset
+            btnSetup.disabled = false;
+            btnSetup.textContent = 'Quellen anfordern';
+            btnSetup.style.background = 'var(--primary-gradient)';
+            btnSetup.style.color = '#ffffff';
+            btnSetup.style.border = 'none';
+
+            btnStart.disabled = true;
+            btnPause.disabled = true;
+            btnStop.disabled = true;
+
+            document.getElementById('mode-audio').disabled = false;
+            document.getElementById('mode-video').disabled = false;
+
+            volumeMic.disabled = true;
+            volumeSystem.disabled = true;
+            cardMic.classList.remove('active');
+            cardSystem.classList.remove('active');
+            statusMic.textContent = 'Inaktiv';
+            statusMic.classList.remove('active');
+            statusSystem.textContent = 'Inaktiv';
+            statusSystem.classList.remove('active');
+
+            // Visualizer reset
+            if (visualizerAnimationId) {
+                cancelAnimationFrame(visualizerAnimationId);
+            }
+            const canvas = document.getElementById('visualizer-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            visualizerPlaceholder.style.opacity = 1;
+
+            // Preview player reset
+            previewPanel.style.display = 'none';
+            previewVideo.src = '';
+            previewAudio.src = '';
+            
+            log('Zurücksetzen abgeschlossen. Bereit für neue Quellen.', 'success');
+        });
+
+        // Cleanup Helper
+        function cleanupStreams() {
+            if (micStream) {
+                micStream.getTracks().forEach(track => track.stop());
+                micStream = null;
+            }
+            if (screenStream) {
+                screenStream.getTracks().forEach(track => track.stop());
+                screenStream = null;
+            }
+            if (audioCtx) {
+                audioCtx.close();
+                audioCtx = null;
+            }
+            micSourceNode = null;
+            screenSourceNode = null;
+            micGainNode = null;
+            screenGainNode = null;
+            mixedDestinationNode = null;
+            analyserNode = null;
+        }
+
+        // Timer Update
+        function updateTimer() {
+            elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+            const hrs = Math.floor(elapsedTime / 3600).toString().padStart(2, '0');
+            const mins = Math.floor((elapsedTime % 3600) / 60).toString().padStart(2, '0');
+            const secs = (elapsedTime % 60).toString().padStart(2, '0');
+            timerDisplay.textContent = `${hrs}:${mins}:${secs}`;
+        }
+    </script>
+</body>
+</html>
